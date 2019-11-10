@@ -1,0 +1,22 @@
+body {
+  background-color: #fafafa;
+}
+.my-gallery figure {
+  display: inline-block;
+  width: 31%;
+  padding: 10px;
+  margin: auto;
+}
+.my-gallery figure a {
+  display: inline-block;
+}
+.my-gallery figure a img {
+  width: 100%;
+}
+.mint-swipe .mint-swipe-items-wrap {
+  height: 200px;
+  text-align: center;
+}
+.mint-swipe .mint-swipe-items-wrap img {
+  height: 100%;
+}

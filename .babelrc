@@ -1,0 +1,15 @@
+{
+  "presets":["env","stage-0"],
+  "plugins":["transform-runtime",["component", [
+    {
+      "libraryName": "mint-ui",
+      "style": true
+    }
+  ]], ["transform-remove-strict-mode"]]
+  // 方式二使用先下载 babel-plugin-transform-remove-strict-mode在配置中plugins transform-remove-strict-mode
+  // // 忽略严格模式方式一ignore 
+  // "ignore": [
+  //   "./src/lib/mui/js/mui.js"
+  // ]
+
+}
