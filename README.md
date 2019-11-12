@@ -283,6 +283,7 @@ methods: {
 
 
 
+<<<<<<< HEAD
 ### 购物车
 
 ​	通过vuex仓库存储公共数据，使用本地缓存localStorage来缓存数据
@@ -306,3 +307,5 @@ methods: {
 
 
 
+=======
+>>>>>>> a9daaac20e111934ab31c1f7bd78509dbf0b5562
