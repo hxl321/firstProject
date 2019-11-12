@@ -6,11 +6,7 @@
  2.轮播图
  3.六宫格渲染，新闻资讯, 图文分享, 商品购买, 跳转到对应的列表
 
- 4.底部页签，Tabbar渲染, 点击tabbar跳转对应的页面,通过vue的动画机制实现，页面跳转时右近左出过渡效果，其中底部购物车小图标使用mui的扩展图标，如下样式 mui-icon mui-icon-extra mui-icon-extra-cart，
-
-注意：底部标签页使用的route-link跳转时，在进入其他页面如新闻列表时底部的跳转会失效，解决将底部的mui封装样式.mui-tab-item 复制，改成自己的样式
-
-
+ 4.底部页签，Tabbar渲染, 点击tabbar跳转对应的页面,通过vue的动画机制实现，页面跳转时右近左出过渡效果，其中底部购物车小图标使用mui的扩展图标，如下样式 mui-icon mui-icon-extra mui-icon-extra-cart
 
 ### 新闻资讯
 
@@ -18,9 +14,7 @@
 
 1. 渲染页面
 
-   页面渲染时，实现加载更多的功能，为加载更多按钮，绑定点击事件，在事件中，请求下一页数据
-   点击加载更多 ，让 pageIndex++，然后重新调用 this.getComments() 方法 重新获取最新一页的数据
-   为了防止 新数据 覆盖老数据的情况，我们在 点击加载更多的时候，每当获取到新数据，使用数组的拼接 concat
+   
 
 2. 格式化时间---使用moment.js
 
@@ -39,7 +33,7 @@ Vue.filter('dataFormat',function(data,pramas){
 
 1.根据id渲染页面新闻详情页
 
-2.评论，使用封装的组件，并传递id，具体见评论模块
+2.评论，使用封装的组件，并传递id，具体见评论模块，其中页面渲染时，实现加载更多的功能，为加载更多按钮，绑定点击事件，在事件中，请求下一页数据 ，让 pageIndex++，然后重新调用 this.getComments() 方法，重新获取最新一页的数据，为了防止 新数据 覆盖老数据的情况，我们在 点击加载更多的时候，每当获取到新数据，使用数组的拼接 concat
 
 
 
@@ -90,6 +84,41 @@ Vue.filter('dataFormat',function(data,pramas){
        });
      }
    ```
+
+   注意1：添加区域滚动之后会
+
+   报错：mui.js:3493 Uncaught TypeError: 'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them
+       at Function.Class.extend (mui.js:3493)
+
+   解决方法移除严格模式
+
+   方式一：在`.babelrc`中添加:ignore
+
+   方式二：[babel-plugin-transform-remove-strict-mode](https://github.com/genify/babel-plugin-transform-remove-strict-mode)
+
+   ```
+   {
+     "presets":["env","stage-0"],
+     "plugins":["transform-runtime",["component", [
+       {
+         "libraryName": "mint-ui",
+         "style": true
+       }
+     ]], ["transform-remove-strict-mode"]]
+    
+     // 方式二使用先下载 npm install babel-plugin-transform-remove-strict-mode
+     //在.babelrc的配置plugins中添加transform-remove-strict-mode
+    
+    
+    // 忽略严格模式方式一ignore
+     // "ignore": [
+     //   "./src/lib/mui/js/mui.js"
+     // ]
+   
+   }
+   ```
+
+   注意2：添加之后会发现底部标签页使用的route-link跳转时，在进入其他页面如新闻列表时底部的跳转会失效，解决将底部的mui封装样式.mui-tab-item 复制，改成自己的样式
 
    
 
@@ -154,8 +183,12 @@ Vue.filter('dataFormat',function(data,pramas){
 #### 商品列表
 
 1. 点击首页的商品购买跳转到商品列表页面
+
 2. 渲染商品
+
 3. 完成商品购买中的商品列表功能模块(包含加载更多的功能效果)
+
+   改造，除了route-link可以跳转页面，还可以通过编程导航 ，使用$router导航对象跳转。
 
 
 
@@ -163,46 +196,105 @@ Vue.filter('dataFormat',function(data,pramas){
 
 1.完成商品购买中的商品详情模块, 包含轮播图
 
-2.小球飞到购物车,设置商品数量的最大限度.以及添加购物车商品微标数量增加
+将这里的轮播图与home页的轮播图封装车公共的组件，其中，需要注意商品详情页的轮播图样式与home中轮播图样式不同，home页的img需要设置width：100%，而商品详情页不需要，解决方式由父组件向子组件传递一个参数，作为表记，来判断是否使用添加一个width：100%的类。
 
-3.点击图文介绍进入对应的图文详情
+```
+//父组件
+<banner :banner="imgList" :flag="false"></banner>
 
-4.点击商品评论进入对应的商品评论
+//banner.vue组件,根据flag判断
+<img :src="item.img" :class="{width:flag}"/>
+
+//样式如下
+// 设置home与商品详情页的banner样式不一致的
+.mint-swipe .mint-swipe-items-wrap {
+  height: 200px;
+  text-align: center;
+  img{
+    // width: 100%;
+    height: 100%;
+  }
+}
+// home需要width 而商品详情不需要
+.width{
+    width: 100%;
+}
+```
+
+2.小球飞到购物车
+
+通过vue通过的过渡&动画，结合JavaScript 钩子 
+
+```
+ <transition @before-enter="beforeenter" @enter="enter" @after-enter="afterEnter">
+    <div class="ball" v-show="flag" @transitionend="transitionEnd"></div>
+ </transition>
+```
+
+在小球做运动的时候，使用到getBoundingClientRect() 的方法来获取，页面元素的left、top等值，来计算小球移动到，购物车上徽标的距离，除此通过一个isShow来作为一个开关阀，优化小球动画未完成而导致多次触发，小球动画的事件。
+
+```
+methods: {
+ 	// 点击进入购物车
+    goCart() {
+      if (this.isShow) {
+        return false;
+      }
+      this.flag = !this.flag;
+    },
+    beforeenter(el) {
+      this.isShow = true;
+      el.style.transform = "translate(0,0)";
+    },
+    enter(el, done) {
+      el.offsetHeight;
+      // getBoundingClientRect()获取坐标
+      // 获取购物车上的数字坐标
+      console.log(document.querySelector(".mui-badge").getBoundingClientRect());
+      let badge = document.querySelector(".mui-badge").getBoundingClientRect();
+      // 获取小球的坐标
+      let ball = el.getBoundingClientRect();
+      // 求差
+      let x = badge.left - ball.left;
+      let y = badge.top - ball.top;
+
+      el.style.transform = `translate(${x}px, ${y}px)`;
+      el.style.transition = "all 1s cubic-bezier(0, -0.32, 0.9, 0.07)";
+      done();
+    },
+    afterEnter() {
+      this.flag = !this.flag;
+    },
+    transitionEnd() {
+      this.isShow = false;
+    }
+ }
+```
+
+
+
+3.设置商品数量的最大限度，以及添加购物车商品微标数量增加
+
+​      封装数字输入框，注意数字输入框记得初始化
+
+4.点击图文介绍进入对应的图文详情
+
+5.点击商品评论进入对应的商品评论
 
 
 
 ### 购物车
 
+​	通过vuex仓库存储公共数据，使用本地缓存localStorage来缓存数据
 
+​    1.如果组件想直接从state中获取数据，通过this.$store.state.属性名  访问
+    2.如果组件想修改数据，或是操作数据更多业务时，通过使用mutations提供的方法，
+        通过this.$store.commit('方法名',传递给方法的唯一参数)来触发
+    3.如果只想针对state中的数据进行计算 包装等，推荐使用getters，通过this.$store.getters.方法名 来调用
 
+### 通过真机预览项目
 
-
-
-
-
-
-
-
-
-
-
-
-10制作顶部滑动条的坑们：
-需要借助于 MUI 中的 tab-top-webview-main.html
-需要把 slider 区域的 mui-fullscreen 类去掉
-滑动条无法正常触发滑动，通过检查官方文档，发现这是JS组件，需要被初始化一下：
-导入 mui.js
-调用官方提供的 方式 去初始化：
-mui('.mui-scroll-wrapper').scroll({
-  deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
-});
-我们在初始化 滑动条 的时候，导入的 mui.js ，但是，控制台报错： Uncaught TypeError: 'caller', 'callee', and 'arguments' properties may not be accessed on strict mode
-经过我们合理的推测，觉得，可能是 mui.js 中用到了 'caller', 'callee', and 'arguments' 东西，但是， webpack 打包好的 bundle.js 中，默认是启用严格模式的，所以，这两者冲突了；
-解决方案： 1. 把 mui.js 中的 非严格 模式的代码改掉；但是不现实； 2. 把 webpack 打包时候的严格模式禁用掉；
-最终，我们选择了 plan B 移除严格模式： 使用这个插件 babel-plugin-transform-remove-strict-mode
-刚进入 图片分享页面的时候， 滑动条无法正常工作， 经过我们认真的分析，发现， 如果要初始化 滑动条，必须要等 DOM 元素加载完毕，所以，我们把 初始化 滑动条 的代码，搬到了 mounted 生命周期函数中；
-当 滑动条 调试OK后，发现， tabbar 无法正常工作了，这时候，我们需要把 每个 tabbar 按钮的 样式中 mui-tab-item 重新改一下名字；
-获取所有分类，并渲染 分类列表；
+  电脑与手机的连接同一个wifi，在package.json 配置中增加 --host 自己的主机ip
 
 
 

@@ -48,10 +48,9 @@ export default {
     p{
         font-size:16px;
     }
-    .gomeImgLoad{
+}
+  .gomeImgLoad{
         display:block;
         width:100%;
     }
-}
-
 </style>

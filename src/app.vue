@@ -22,7 +22,7 @@
       </router-link>
       <router-link class="my-tab-item" to="/cart">
         <span class="mui-icon mui-icon-extra mui-icon-extra-cart">
-          <span class="mui-badge">9</span>
+          <span class="mui-badge">{{this.$store.getters.getAllNum}}</span>
         </span>
         <span class="mui-tab-label">购物车</span>
       </router-link>
@@ -35,11 +35,13 @@
 </template>
 
 <script>
+
 export default {
   name: "app",
   methods: {
     goto(){
-      history.back(-1);
+      // history.back(-1);
+      this.$router.go(-1);
     }
   },
 };

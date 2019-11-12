@@ -20,3 +20,7 @@ body {
 .mint-swipe .mint-swipe-items-wrap img {
   height: 100%;
 }
+.gomeImgLoad {
+  display: block;
+  width: 100%;
+}

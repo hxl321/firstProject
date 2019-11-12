@@ -48,19 +48,28 @@ export default {
       if (!this.content.trim()) {
         return Toast("内容不能为空");
       }
-      this.$axios
-        .post(`/api/postcomment/${this.id}`, {
-          content: this.content.trim()
-        })
-        .then(res => {
-          //   console.log(res);
-          this.content = "";
-          if (res.status === 200) {
-            // console.log(res.data.message);
-			      Toast(res.data.message);
-			      this.getComments();
-          }
-        });
+      // 1.使用axios直接请求
+      // this.$axios.post(`/api/postcomment/${this.id}`, {
+      //     content: this.content.trim()
+      //   }).then(res => {
+      //     //   console.log(res);
+      //     this.content = "";
+      //     if (res.status === 200) {
+      //       // console.log(res.data.message);
+			//       Toast(res.data.message);
+			//       this.getComments();
+      //     }
+      //   });
+
+      // 2.使用封装的post来请求
+      this.$http.post(`/api/postcomment/${this.id}`,{ content: this.content.trim()})
+      .then(res=>{
+        console.log(res);
+         this.content = "";
+        Toast(res.data.message);
+        this.getComments();
+      })
+
 	},
 	getmore(){
 		this.pageindex++;
@@ -83,9 +92,10 @@ export default {
   padding: 10px;
 }
 .item_content {
-  margin-left: 30px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
+    /* margin-left: 30px; */
+    /* border: 1px solid #ccc; */
+    /* border-radius: 10px; */
+    padding: 10px 20px;
+    background: #eee;
 }
 </style>

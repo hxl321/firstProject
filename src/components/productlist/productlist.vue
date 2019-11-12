@@ -1,7 +1,8 @@
 <template>
   <div>
     <ul class="product">
-      <router-link :to="'/home/productInfo/'+item.id" class="p_info" v-for="item in pList" :key="item.id">
+      <!-- <router-link :to="'/home/productInfo/'+item.id" class="p_info" v-for="item in pList" :key="item.id"> -->
+      <div  class="p_info" @click="goDesc(item.id)" v-for="item in pList" :key="item.id">
         <div class="p_pic">
           <a href="#">
             <img :src="item.img_url" alt />
@@ -16,7 +17,8 @@
           <span>热卖中</span>
           <span>剩余数量:{{item.stock_quantity}}</span>
         </div>
-      </router-link>
+      </div>
+      <!-- </router-link> -->
     </ul>
     <mt-button type="danger" size="large" @click="getmore">加载更多</mt-button>
   </div>
@@ -35,6 +37,18 @@ export default {
     this.getPeoducts();
   },
   methods: {
+    // 编程导航，路由除了可以使用route-link来实现跳转，也可以通过js编程导航来实现
+    goDesc(id){
+      // $route是路由参数对象 ，params获取地址后以/拼接的参数 , query获取？之后的参数
+      // $router路由导航对象：相当于js的来实现路由的前进、后退、跳转
+      // 方法一
+      // this.$router.push('/home/productInfo/'+id);
+      // 方法二
+      // this.$router.push({path:'/home/productInfo/'+id});
+      // 方法三：根据路由名来跳转{path:'/home/productInfo/:id',component:productInfo,name:'goodsInfo'},
+      this.$router.push({name:'goodsInfo',params:{id:id}});
+      // 方法三中params中id键名与变量名相同可以简写：this.$router.push({name:'goodsInfo',params:{id}})
+    },
     getPeoducts() {
       this.$axios.get(`/api/getgoods?pageindex=${this.pageindex}`).then(res => {
         console.log(res);
@@ -65,11 +79,11 @@ ul {
   margin-left: 3%;
   margin-top: 15px;
   padding: 10px 10px 0 10px;
-  box-shadow: 0px 0px 8px 0px #a09191;
+  box-shadow: 0px 0px 8px 0px #bfb3b2;
   .p_pic {
     width: 100%;
     min-height: 202px;
-    background: #eee;
+    background: #fff;
     img {
       display: block;
       width: 100%;
@@ -84,7 +98,7 @@ ul {
     text-overflow: ellipsis;
   }
   .p_price {
-    background: #eee;
+    background:  #eee;
     margin: 0 -10px;
     padding: 5px 10px;
     .newPrice {

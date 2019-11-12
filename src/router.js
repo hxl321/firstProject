@@ -36,7 +36,8 @@ export default new VueRouter({
     {path:'/home/imglist/imgInfo/:id',component:imgInfo},
     
     {path:'/home/productlist',component:productList},
-    {path:'/home/productInfo/:id',component:productInfo},
+    // {path:'/home/productInfo/:id',component:productInfo},
+    {path:'/home/productInfo/:id',component:productInfo,name:'goodsInfo'},
     {path:'/home/productdesc/:id',component:productDesc},
     {path:'/home/productcomment/:id',component:productComment}
   ],

@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- 轮播 -->
-    <mt-swipe :auto="4000">
+    <!-- <mt-swipe :auto="4000">
       <mt-swipe-item v-for="item in list" :key="item.id">
         <img :src="item.img" alt />
       </mt-swipe-item>
-    </mt-swipe>
-
+    </mt-swipe> -->
+    <banner :banner='list' :flag="true"></banner>
     <!--  -->
     <ul class="mui-table-view mui-grid-view mui-grid-9">
       <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import banner from '../subcomments/banner.vue'
 export default {
   name: "home",
   data() {
@@ -65,25 +66,31 @@ export default {
         }
       });
     },
-
-    news(){
-
+    getBannerByHttp(){
+      this.$http.get("/api/getlunbo").then(res=>{
+        console.log(res);
+        this.list = res.message;
+      })
     }
   },
   created() {
-    this.getbanner();
+    // this.getbanner();
+    this.getBannerByHttp();
+  },
+  components:{
+    banner
   }
 };
 </script>
 
 <style lang="less">
-.mint-swipe-items-wrap {
-  height: 200px;
-  img{
-    width: 100%;
-    height: 100%;
-  }
-}
+// .mint-swipe-items-wrap {
+//   height: 200px;
+//   img{
+//     width: 100%;
+//     height: 100%;
+//   }
+// }
 
 ul.mui-table-view.mui-grid-9{
   background-color: #fff;
